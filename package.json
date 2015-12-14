@@ -1,0 +1,25 @@
+{
+  "name": "smart-house-hap",
+  "version": "0.0.0",
+  "description": "Smart home project based on HAP-NodeJS",
+  "dependencies": {
+    "debug": "^2.2.0",
+    "hap-nodejs": "0.0.7",
+    "node-persist": "^0.0.6"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node main.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Tony-Pa/smart-house-hap.git"
+  },
+  "author": "Tony <tony.pashchenko@gmail.com>",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Tony-Pa/smart-house-hap/issues"
+  },
+  "homepage": "https://github.com/Tony-Pa/smart-house-hap"
+}
