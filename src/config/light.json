@@ -3,18 +3,21 @@
         "id": "1A:2B:3C:4D:5E:FF",
         "serviceName": "Основной свет на кухне",
         "name": "Основной свет",
-        "pin": 20
+        "pin": 20,
+        "apin": "A0"
     },
     {
         "id": "2A:2B:3C:4D:5E:FF",
         "serviceName": "Подсветка",
         "name": "Подсветка на кухне",
-        "pin": 21
+        "pin": 21,
+        "apin": "A1"
     },
     {
         "id": "3A:2B:3C:4D:5E:FF",
         "serviceName": "Бар",
         "name": "Свет на баре",
-        "pin": 22
+        "pin": 22,
+        "apin": "A2"
     }
 ]

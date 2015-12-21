@@ -4,7 +4,10 @@
   "description": "Smart home project based on HAP-NodeJS",
   "dependencies": {
     "debug": "^2.2.0",
+    "firmata": "^0.8.0",
     "hap-nodejs": "0.0.7",
+    "johnny-five": "^0.9.17",
+    "lodash-node": "^3.10.1",
     "node-persist": "^0.0.6"
   },
   "devDependencies": {},

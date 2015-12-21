@@ -1,47 +1,29 @@
-var path = require('path');
-var storage = require('node-persist');
-var uuid = require('hap-nodejs').uuid;
-var Bridge = require('hap-nodejs').Bridge;
-var Accessory = require('hap-nodejs').Accessory;
-var accessoryLoader = require('hap-nodejs').AccessoryLoader;
+//var five = require('johnny-five');
+var Firmata = require("firmata");
 
-console.log("Starting HAP...");
+var bridgetCore = require('./src/bridgedCore');
+var utils = require('./src/utils');
+var boardservice = require('./src/services/board.service');
 
-var pincode = "031-45-154";
+var config = require('./src/config');
 
-// Initialize our storage system
-storage.initSync();
+var port = '/dev/ttyACM0';
 
-var bridge = new Bridge('Smart House Accessories', uuid.generate("Node Bridge"));
+var board = new Firmata(port);
+board.port = port;
 
-bridge.on('identify', function(paired, callback) {
-    console.log("Node Bridge identify");
-    callback();
-});
+//var board = new five.Board({
+//    port: port
+//});
 
-var dir = path.join(__dirname, "accessories");
-var accessories = accessoryLoader.loadDirectory(dir);
+boardservice.add(board);
 
-accessories.forEach(function(accessory) {
-    bridge.addBridgedAccessory(accessory);
-});
+board.on('ready', initApp);
 
-bridge.publish({
-    username: "1A:11:BB:22:C3:4D",
-    port: 51826,
-    pincode: pincode,
-    category: Accessory.Categories.OTHER
-});
+function initApp() {
+    console.log("Starting HAP...");
 
-_printPincode(pincode);
+    bridgetCore();
 
-function _printPincode(pc) {
-    console.log("Scan this code with your HomeKit App on your iOS device to pair with HAP:");
-    console.log("\x1b[30;47m%s\x1b[0m", "                           ");
-    console.log("\x1b[30;47m%s\x1b[0m", "                           ");
-    console.log("\x1b[30;47m%s\x1b[0m", "      ┌────────────┐       ");
-    console.log("\x1b[30;47m%s\x1b[0m", "      │ " + pc + " │       ");
-    console.log("\x1b[30;47m%s\x1b[0m", "      └────────────┘       ");
-    console.log("\x1b[30;47m%s\x1b[0m", "                           ");
-    console.log("\x1b[30;47m%s\x1b[0m", "                           ");
+    utils.printPincode(config.pincode);
 }
