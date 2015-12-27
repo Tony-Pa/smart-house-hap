@@ -3,7 +3,7 @@ var Service = require('hap-nodejs').Service;
 var Characteristic = require('hap-nodejs').Characteristic;
 var uuid = require('hap-nodejs').uuid;
 
-var LightAccessory = require('../models/lightAccessory');
+var LightAccessory = require('../models/lightAccessory.model');
 var lightService = require('../services/light.service');
 var lightConfig = require('../config/light.json');
 

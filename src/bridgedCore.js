@@ -4,7 +4,7 @@ var uuid = require('hap-nodejs').uuid;
 var Bridge = require('hap-nodejs').Bridge;
 var Accessory = require('hap-nodejs').Accessory;
 var accessoryLoader = require('hap-nodejs').AccessoryLoader;
-var config = require('./config.json');
+var config = require('./config/main');
 
 module.exports = function () {
 // Initialize our storage system

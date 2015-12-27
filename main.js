@@ -1,22 +1,21 @@
-//var five = require('johnny-five');
-var Firmata = require("firmata");
-
 var bridgetCore = require('./src/bridgedCore');
 var utils = require('./src/utils');
-var boardservice = require('./src/services/board.service');
+var BoardModel = require('./src/models/board.model');
+var boardService = require('./src/services/board.service');
 
-var config = require('./src/config');
+var config = require('./src/config/main');
 
-var port = '/dev/ttyACM0';
-
-var board = new Firmata(port);
-board.port = port;
-
-//var board = new five.Board({
-//    port: port
-//});
-
-boardservice.add(board);
+//*
+//var Firmata = require("firmata");
+var board = new BoardModel(config.lightBoard);
+//board.port = config.board;
+/*/
+var five = require('johnny-five');
+var board = new five.Board({
+    port: config.board
+});
+//*///
+boardService.add(board);
 
 board.on('ready', initApp);
 
