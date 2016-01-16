@@ -1,49 +1,50 @@
+"use strict";
 var _ = require('lodash-node');
 var boardservice = require('../services/board.service');
 var config = require('../config/main');
+var Arduino = require('node-arduino');
 
-function LightAccessory (lightParams) {
-    _.extend(this, lightParams);
+class LightAccessory {
+    constructor (lightParams) {
+        _.extend(this, lightParams);
 
-    this.comp = .5;
+        this.sensitivity = .5;
 
-    this.board = boardservice.get(config['lightBoard']);
+        this.board = boardservice.get(config['lightBoard']);
 
-    this.board.pinMode(this.apin, this.board.MODES.ANALOG);
-    this.board.pinMode(this.pin, this.board.MODES.OUTPUT);
-    this.board.digitalWrite(this.pin, this.board.HIGH);
+        this.board.pinMode(this.pin, Arduino.OUTPUT);
 
+        //this.board.digitalWrite(this.pin, this.board.HIGH);
+        this.board.analogReadAverage(this.apin, 100).then((value) => {
+            this.zeroVal = value;
+        });
+    }
 
-    this.board.analogReadAverage(this.apin, 100).then(function (value) {
-        this.zeroVal = value;
-    }.bind(this));
-
-    this.identify = function(paired, callback) {
+    identify(paired, callback) {
         console.log('identify', this.id);
         callback();
-    }.bind(this);
+    }
 
-    this.get = function(callback) {
+    get(callback) {
         var err = null; // in case there were any problems
-        console.log('GET ', this.apin);
 
-        this.board.analogReadAverage(this.apin, 10).then(function (value) {
+        this.board.analogReadAverage(this.apin, 100).then((value) => {
             var val = this.getLightStatus(value);
 
             console.log('GET analogReadAverage: ', this.apin, val);
 
             callback(err, val);
-        }.bind(this));
-    }.bind(this);
+        });
+    }
 
-    this.getLightStatus = function(value) {
-        return Number((this.zeroVal - value) > this.comp);
-    }.bind(this);
+    getLightStatus(value) {
+        return Number((this.zeroVal - value) > this.sensitivity);
+    }
 
-    this.set = function(newValue, callback) {
+    set(newValue, callback) {
         console.log('SET: ', this.pin, newValue);
 
-        this.board.analogReadAverage(this.apin, 10).then(function (value) {
+        this.board.analogReadAverage(this.apin, 100).then((value) => {
             var val = this.getLightStatus(value);
 
             console.log('SET analogReadAverage: ', this.apin, val, newValue);
@@ -52,20 +53,18 @@ function LightAccessory (lightParams) {
                 this._toggleLight();
             }
             callback();
-        }.bind(this));
+        });
+    }
 
-    }.bind(this);
+    _toggleLight() {
+        console.log('toggleLight pin: ', this.pin);
 
-    this._toggleLight = function () {
-            console.log('toggleLight pin: ', this.pin);
+        this.board.digitalWrite(this.pin, Arduino.LOW);
 
-            this.board.digitalWrite(this.pin, this.board.LOW);
-
-            setTimeout(function () {
-                this.board.digitalWrite(this.pin, this.board.HIGH);
-            }.bind(this), 250);
-
-    }.bind(this);
+        setTimeout(() => {
+            this.board.digitalWrite(this.pin, Arduino.HIGH);
+        }, 250);
+    }
 }
 
 module.exports = LightAccessory;

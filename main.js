@@ -1,28 +1,17 @@
 var bridgetCore = require('./src/bridgedCore');
 var utils = require('./src/utils');
-var BoardModel = require('./src/models/board.model');
+var Arduino = require('node-arduino');
 var boardService = require('./src/services/board.service');
-
 var config = require('./src/config/main');
 
-//*
-//var Firmata = require("firmata");
-var board = new BoardModel(config.lightBoard);
-//board.port = config.board;
-/*/
-var five = require('johnny-five');
-var board = new five.Board({
-    port: config.board
-});
-//*///
+let board = new Arduino.connect(config.lightBoard);
+
 boardService.add(board);
 
-board.on('ready', initApp);
-
-function initApp() {
+board.sp.open(() => {
     console.log("Starting HAP...");
 
     bridgetCore();
 
     utils.printPincode(config.pincode);
-}
+});
