@@ -4,9 +4,9 @@
   "description": "Smart home project based on HAP-NodeJS",
   "dependencies": {
     "debug": "^2.2.0",
-    "hap-nodejs": "0.0.7",
+    "hap-nodejs": "^0.3.2",
     "lodash-node": "^3.10.1",
-    "node-persist": "^0.0.6",
+    "node-persist": "^0.0.8",
     "node-arduino": "github:tony-pa/node-arduino"
   },
   "devDependencies": {},

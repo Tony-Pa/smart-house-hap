@@ -9,7 +9,7 @@ var lightConfig = require('../config/light.json');
 
 var lights = [];
 
-lightConfig.forEach(function (lightParams) {
+lightConfig.forEach((lightParams) => {
 
     var lightUUID = uuid.generate('hap-nodejs:accessories:light:' + lightParams.id);
     var light = new Accessory(lightParams.name, lightUUID);
@@ -17,13 +17,13 @@ lightConfig.forEach(function (lightParams) {
     var lightAccessory = new LightAccessory(lightParams);
     lightService.add(lightAccessory);
 
-    light.on('identify', lightAccessory.identify);
+    light.on('identify', lightAccessory.identify.bind(lightAccessory));
 
     light
         .addService(Service.Lightbulb, lightParams.serviceName)
         .getCharacteristic(Characteristic.On)
-        .on('set', lightAccessory.set)
-        .on('get', lightAccessory.get);
+        .on('set', lightAccessory.set.bind(lightAccessory))
+        .on('get', lightAccessory.get.bind(lightAccessory));
 
     lights.push(light);
 });

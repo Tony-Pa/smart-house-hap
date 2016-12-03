@@ -7,7 +7,7 @@ var accessoryLoader = require('hap-nodejs').AccessoryLoader;
 var config = require('./config/main');
 
 module.exports = function () {
-// Initialize our storage system
+    // Initialize our storage system
     storage.initSync();
 
     var bridge = new Bridge('Smart House Accessories', uuid.generate('Smart House Node Bridge'));
@@ -20,9 +20,7 @@ module.exports = function () {
     var dir = path.join(__dirname, 'accessories');
     var accessories = accessoryLoader.loadDirectory(dir);
 
-    accessories.forEach(function (accessory) {
-        bridge.addBridgedAccessory(accessory);
-    });
+    accessories.forEach(bridge.addBridgedAccessory.bind(bridge));
 
     bridge.publish({
         username: config.username,

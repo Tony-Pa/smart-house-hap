@@ -1,10 +1,10 @@
 module.exports = {
     list: {},
-    add: function (model) {
-        this.list[model.port] = model;
+    add: function (model, id) {
+        this.list[id] = model;
     },
-    get: function (port) {
-        return this.list[port];
+    get: function (id) {
+        return this.list[id];
     }
 };
 
