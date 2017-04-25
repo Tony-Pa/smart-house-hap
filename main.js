@@ -6,14 +6,16 @@ var Arduino = require('node-arduino');
 var boardService = require('./src/services/board.service');
 var config = require('./src/config/main');
 
-var board = new Arduino.connect(config.lightBoard);
+var board = new Arduino.connect(config.mainBoard);
 
-boardService.add(board, config.lightBoard);
+boardService.add(board, config.mainBoard);
 
 board.sp.open(() => {
-    console.log("Starting HAP...");
+   setTimeout(() => {
+       console.log("Starting HAP...");
 
-    bridgetCore();
+       bridgetCore();
 
-    utils.printPincode(config.pincode);
+       utils.printPincode(config.pincode);
+   }, 1000);
 });

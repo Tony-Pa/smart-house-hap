@@ -11,10 +11,11 @@ class LightAccessory {
         this.apin = lightParams.apin;
         this.zeroVal = 200;
 
-        this.board = boardService.get(config.lightBoard);
+        this.board = boardService.get(config.mainBoard);
 
+        this.board.pinModeSetDefault(this.pin, this.board.OUTPUT, this.board.HIGH);
 
-        this.board.pinModeSetDefault(22, this.board.OUTPUT, this.board.LOW);
+        this._toggleLight();
         // this.debug = debug('LA');
     }
 
