@@ -5,8 +5,8 @@ var config = require('../config/main');
 
 class ThermostatAccessory {
     constructor (thermostatParams) {
-        this.OFF_INTERVAL = 6000; // 10 min
-        this.ON_INTERVAL = 6000; // 1 min
+        this.OFF_INTERVAL = 600000; // 10 min
+        this.ON_INTERVAL = 60000; // 1 min
         this.TEMP_DELTA = 1;
         this.currentTemp = 0;
         this.temp = 24; //TODO: store value to some storage
