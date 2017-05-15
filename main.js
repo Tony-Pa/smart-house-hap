@@ -1,12 +1,16 @@
 "use strict";
 
-var bridgetCore = require('./src/bridgedCore');
-var utils = require('./src/utils');
-var Arduino = require('node-arduino');
-var boardService = require('./src/services/board.service');
-var config = require('./src/config/main');
+const local = false;
 
-var board = new Arduino.connect(config.mainBoard);
+const bridgetCore = require('./src/bridgedCore');
+const utils = require('./src/utils');
+
+const Arduino = !local ? require('node-arduino') : require('./src/node-arduino.mock.js');
+
+const boardService = require('./src/services/board.service');
+const config = require('./src/config/main');
+
+const board = new Arduino.connect(config.mainBoard);
 
 boardService.add(board, config.mainBoard);
 

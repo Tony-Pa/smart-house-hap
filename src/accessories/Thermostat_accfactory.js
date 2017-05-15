@@ -31,6 +31,9 @@ thermostatConfig.forEach((thermostatParams) => {
     service.getCharacteristic(Characteristic.CurrentTemperature)
         .on('get', thermostatAccessory.getCurrentTemp.bind(thermostatAccessory));
 
+    //TODO: smelly code
+    thermostatAccessory.setCurrentTempCallback(service.setCharacteristic.bind(service, Characteristic.CurrentTemperature));
+
     thermostats.push(thermostat);
 });
 
