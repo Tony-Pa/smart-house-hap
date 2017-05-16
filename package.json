@@ -5,8 +5,9 @@
   "dependencies": {
     "debug": "^2.3.3",
     "hap-nodejs": "^0.4.16",
+    "node-arduino": "github:tony-pa/node-arduino",
     "node-persist": "^0.0.8",
-    "node-arduino": "github:tony-pa/node-arduino"
+    "redis": "^2.7.1"
   },
   "devDependencies": {},
   "scripts": {

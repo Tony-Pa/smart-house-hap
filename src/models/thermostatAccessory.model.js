@@ -2,6 +2,7 @@
 var debug = require('debug')('TSA');
 var boardService = require('../services/board.service');
 var config = require('../config/main');
+var redisClient = require("redis").createClient();
 
 class ThermostatAccessory {
     constructor (thermostatParams) {
@@ -9,16 +10,19 @@ class ThermostatAccessory {
         this.ON_INTERVAL = 60000; // 1 min
         this.TEMP_DELTA = 1;
         this.currentTemp = 0;
-        this.temp = 24; //TODO: store value to some storage
         this.relayStatus = false;
+        this.id = thermostatParams.id;
         this.pins = thermostatParams.pins;
         this.tempSensors = thermostatParams.tempSensors;
 
         this.board = boardService.get(config.mainBoard);
-
         this.board.pinModeSetDefault(this.pins.relay, this.board.OUTPUT, this.board.HIGH);
 
-        this.setState(0);
+        this.redisGet('temp', (err, value) => { this.temp = Number(value);});
+        this.redisGet('state', (err, value) => {
+            this.state = Number(value);
+            this._processStateUpdate();
+        });
     }
 
     identify(paired, callback) {
@@ -27,13 +31,15 @@ class ThermostatAccessory {
     }
 
     getState(callback) {
-        debug('getState', this.state);
-        callback(null, this.state);
+        debug('getState');
+
+        this.redisGet('state', (err, value) => { callback(err, Number(value)); })
     }
 
     setState(value, callback) {
         debug('setState', value);
         this.state = value;
+        this.redisSet('state', value);
 
         this._processStateUpdate();
 
@@ -41,15 +47,17 @@ class ThermostatAccessory {
     }
 
     getTemp(callback) {
-        debug('getTemp', this.temp);
+        debug('getTemp');
 
-        callback(null, this.temp);
+        this.redisGet('temp', (err, value) => { callback(err, Number(value)); })
     }
 
     setTemp(value, callback) {
         debug('setTemp', value);
 
         this.temp = value;
+        this.redisSet('temp', value);
+
         this._processRelayStatus();
         callback();
     }
@@ -133,6 +141,14 @@ class ThermostatAccessory {
 
         clearInterval(this.intervalId);
         this.intervalId = setInterval(this._readCurrentTemp.bind(this), time)
+    }
+
+    redisSet(key, value) {
+        redisClient.set('thermostat:' + this.id + ':' + key, value);
+    }
+
+    redisGet(key, callback) {
+        redisClient.get('thermostat:' + this.id + ':' + key, callback);
     }
 }
 
