@@ -2,10 +2,10 @@
 var debug = require('debug')('TSA');
 var boardService = require('../services/board.service');
 var config = require('../config/main');
-var redisClient = require("redis").createClient();
+var storage = require('node-persist');
 
 class ThermostatAccessory {
-    constructor (thermostatParams) {
+    constructor(thermostatParams) {
         this.OFF_INTERVAL = 600000; // 10 min
         this.ON_INTERVAL = 60000; // 1 min
         this.TEMP_DELTA = 1;
@@ -18,9 +18,11 @@ class ThermostatAccessory {
         this.board = boardService.get(config.mainBoard);
         this.board.pinModeSetDefault(this.pins.relay, this.board.OUTPUT, this.board.HIGH);
 
-        this.redisGet('temp', (err, value) => { this.temp = Number(value);});
-        this.redisGet('state', (err, value) => {
-            this.state = Number(value);
+        this.storageGet('temp', (err, value) => {
+            this.temp = value || 24;
+        });
+        this.storageGet('state', (err, value) => {
+            this.state = value || 0;
             this._processStateUpdate();
         });
     }
@@ -32,14 +34,13 @@ class ThermostatAccessory {
 
     getState(callback) {
         debug('getState');
-
-        this.redisGet('state', (err, value) => { callback(err, Number(value)); })
+        this.storageGet('state', callback);
     }
 
     setState(value, callback) {
         debug('setState', value);
         this.state = value;
-        this.redisSet('state', value);
+        this.storageSet('state', value);
 
         this._processStateUpdate();
 
@@ -48,15 +49,14 @@ class ThermostatAccessory {
 
     getTemp(callback) {
         debug('getTemp');
-
-        this.redisGet('temp', (err, value) => { callback(err, Number(value)); })
+        this.storageGet('temp', callback);
     }
 
     setTemp(value, callback) {
         debug('setTemp', value);
 
         this.temp = value;
-        this.redisSet('temp', value);
+        this.storageSet('temp', value);
 
         this._processRelayStatus();
         callback();
@@ -88,7 +88,7 @@ class ThermostatAccessory {
             let sum = 0;
             value.forEach((elem) => sum += parseFloat(elem, 10));
 
-            this.currentTemp = Math.round(sum/value.length);
+            this.currentTemp = Math.round(sum / value.length);
 
             this.setCurrentTemp(this.currentTemp);
 
@@ -102,7 +102,7 @@ class ThermostatAccessory {
     _turnRelay(status) {
         debug('_turnRelay', status);
 
-        if (this.relayStatus !== status ) {
+        if (this.relayStatus !== status) {
             this.relayStatus = status;
             this.board.digitalWrite(this.pins.relay, status ? this.board.LOW : this.board.HIGH);
         }
@@ -143,12 +143,12 @@ class ThermostatAccessory {
         this.intervalId = setInterval(this._readCurrentTemp.bind(this), time)
     }
 
-    redisSet(key, value) {
-        redisClient.set('thermostat:' + this.id + ':' + key, value);
+    storageSet(key, value) {
+        storage.setItem('thermostat:' + this.id + ':' + key, value);
     }
 
-    redisGet(key, callback) {
-        redisClient.get('thermostat:' + this.id + ':' + key, callback);
+    storageGet(key, callback) {
+        storage.getItem('thermostat:' + this.id + ':' + key, callback);
     }
 }
 

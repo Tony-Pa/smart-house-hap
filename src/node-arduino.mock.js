@@ -1,45 +1,51 @@
 "use strict";
 
 class Board {
-  constructor(path) {
-    this.sp = {
-      open: (callback) => {
-        callback()
-      }
-    };
-  }
+    constructor() {
+        this.sp = {
+            open: (callback) => {
+                callback()
+            }
+        };
+    }
 
-  pinMode(pin, mode) {}
+    pinMode(pin, mode) {
+    }
 
-  pinModeSetDefault(pin, mode, defaultVal) {}
+    pinModeSetDefault(pin, mode, defaultVal) {
+    }
 
-  digitalRead(pin, callback) {
-    setTimeout(callback.bind(null, 1), 500);
-  }
+    digitalRead(pin, callback) {
+        setTimeout(callback.bind(null, 1), 500);
+    }
 
-  digitalWrite(pin, val) {}
+    digitalWrite(pin, val) {
+    }
 
-  analogReference(type) {}
+    analogReference(type) {
+    }
 
-  analogRead(pin, callback) {
-    setTimeout(callback.bind(null, 512), 500);
-  }
+    analogRead(pin, callback) {
+        setTimeout(callback.bind(null, 512), 500);
+    }
 
-  analogReadAverage(pin, count, callback) {
-    setTimeout(callback.bind(null, 512), 500);
-  }
+    analogReadAverage(pin, count, callback) {
+        setTimeout(callback.bind(null, 512), 500);
+    }
 
-  analogWrite(pin, val) {}
+    analogWrite(pin, val) {
+    }
 
-  readTemp(pin, count, callback) {
-    setTimeout(callback.bind(null, [21, 22, 23]), 500);
-  }
+    readTemp(pin, count, callback) {
+        setTimeout(callback.bind(null, [21, 22, 23]), 500);
+    }
 
-  readTempHum(pin, callback) {
-    setTimeout(callback.bind(null, [20, 24, 26]), 500);
-  }
+    readTempHum(pin, callback) {
+        setTimeout(callback.bind(null, [20, 24, 26]), 500);
+    }
 
-  close() {}
+    close() {
+    }
 }
 
 exports.connect = Board;

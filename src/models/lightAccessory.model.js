@@ -6,7 +6,7 @@ var config = require('../config/main');
 const TOGGLE_LIGHT_TIMEOUT = 250;
 
 class LightAccessory {
-    constructor (lightParams) {
+    constructor(lightParams) {
         this.pin = lightParams.pin;
         this.apin = lightParams.apin;
         this.zeroVal = 200;
@@ -44,7 +44,7 @@ class LightAccessory {
                 console.log('getLightStatus - Promise - resolve', value);
                 resolve(Number(this.zeroVal < value));
             });
-        }) ;
+        });
     }
 
     set(newValue, callback) {

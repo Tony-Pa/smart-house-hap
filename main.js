@@ -1,6 +1,6 @@
 "use strict";
 
-const local = false;
+const local = !false;
 
 const bridgetCore = require('./src/bridgedCore');
 const utils = require('./src/utils');
@@ -15,11 +15,11 @@ const board = new Arduino.connect(config.mainBoard);
 boardService.add(board, config.mainBoard);
 
 board.sp.open(() => {
-   setTimeout(() => {
-       console.log("Starting HAP...");
+    setTimeout(() => {
+        console.log("Starting HAP...");
 
-       bridgetCore();
+        bridgetCore();
 
-       utils.printPincode(config.pincode);
-   }, 1000);
+        utils.printPincode(config.pincode);
+    }, 1000);
 });
