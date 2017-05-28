@@ -1,73 +1,78 @@
 "use strict";
-var debug = require('debug');
-var boardService = require('../services/board.service');
-var config = require('../config/main');
+const debug = require('debug')('LA');
+const boardService = require('../services/board.service');
+const config = require('../config/main');
 
 const TOGGLE_LIGHT_TIMEOUT = 250;
+const LIGHT_CHECK_INTERVAL = 1000;
+const NUMBERS_OF_READS = 10;
+const THRESHOLD_LIGHT_VALUE = 200;
 
 class LightAccessory {
     constructor(lightParams) {
         this.pin = lightParams.pin;
         this.apin = lightParams.apin;
-        this.zeroVal = 200;
 
         this.board = boardService.get(config.mainBoard);
-
         this.board.pinModeSetDefault(this.pin, this.board.OUTPUT, this.board.HIGH);
 
-        this._toggleLight();
-        // this.debug = debug('LA');
+        setTimeout(this._checkTimeout.bind(this), LIGHT_CHECK_INTERVAL * Math.random());
     }
 
     identify(paired, callback) {
-        console.log('identify', this.id, paired);
+        debug('identify', paired);
         callback();
     }
 
     get(callback) {
-        var err = null; // in case there were any problems
-        console.log('GET', this.apin);
-        this.getLightStatus().then((val) => {
-            console.log('GET analogReadAverage: ', this.apin, val);
-
-            callback(err, val);
-        });
-    }
-
-    getLightStatus() {
-        console.log('getLightStatus');
-        return new Promise((resolve) => {
-
-            console.log('getLightStatus - Promise');
-            this.board.analogReadAverage(this.apin, 10, (value) => {
-
-                console.log('getLightStatus - Promise - resolve', value);
-                resolve(Number(this.zeroVal < value));
-            });
-        });
+        debug('GET', this.apin);
+        this.getLightStatus(callback);
     }
 
     set(newValue, callback) {
-        console.log('SET: ', this.pin, newValue);
-        this.getLightStatus().then((val) => {
-
-            console.log('SET analogReadAverage: ', this.apin, val, newValue);
-
-            if (val !== newValue) {
+        debug('SET', this.pin, newValue);
+        this.getLightStatus((err, value) => {
+            if (value !== newValue) {
                 this._toggleLight();
             }
             callback();
         });
     }
 
-    _toggleLight() {
-        console.log('toggleLight pin: ', this.pin);
+    getLightStatus(callback) {
+        debug('getLightStatus');
+        this.board.analogReadAverage(this.apin, NUMBERS_OF_READS, (value) => {
+            debug('getLightStatus - analogReadAverage', value);
+            callback(null, Number(THRESHOLD_LIGHT_VALUE < value));
+        });
+    }
 
+    setCurrentStatus(err, value) {
+        debug('setCurrentStatus', value);
+        this.currentStatusCallback(value);
+    }
+
+    setCurrentStatusCallback(callback) {
+        this.currentStatusCallback = callback;
+    }
+
+    _toggleLight() {
+        debug('toggleLight pin: ', this.pin);
         this.board.digitalWrite(this.pin, this.board.LOW);
 
         setTimeout(() => {
             this.board.digitalWrite(this.pin, this.board.HIGH);
         }, TOGGLE_LIGHT_TIMEOUT);
+    }
+
+    _checkTimeout() {
+        debug('_checkTimeout');
+        setInterval(this._checkInterval.bind(this), LIGHT_CHECK_INTERVAL)
+    }
+
+    _checkInterval() {
+        debug('_setCheckInterval');
+        this.getLightStatus(this.setCurrentStatus.bind(this));
     }
 }
 

@@ -16,12 +16,14 @@ lightConfig.forEach((lightParams) => {
 
     light.on('identify', lightAccessory.identify.bind(lightAccessory));
 
-    light
-        .addService(Service.Lightbulb, lightParams.serviceName)
-            .getCharacteristic(Characteristic.On)
-                .on('set', lightAccessory.set.bind(lightAccessory))
-                .on('get', lightAccessory.get.bind(lightAccessory));
+    let service = light
+        .addService(Service.Lightbulb, lightParams.serviceName);
 
+    service.getCharacteristic(Characteristic.On)
+        .on('set', lightAccessory.set.bind(lightAccessory))
+        .on('get', lightAccessory.get.bind(lightAccessory));
+
+    lightAccessory.setCurrentStatusCallback(service.setCharacteristic.bind(service, Characteristic.On));
     lights.push(light);
 });
 
