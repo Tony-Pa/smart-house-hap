@@ -1,8 +1,8 @@
 "use strict";
-var debug = require('debug')('TSA');
-var boardService = require('../services/board.service');
-var config = require('../config/main');
-var storage = require('node-persist');
+const debug = require('debug')('TSA');
+const boardService = require('../services/board.service');
+const config = require('../config/main');
+const storage = require('node-persist');
 
 class ThermostatAccessory {
     constructor(thermostatParams) {
@@ -111,16 +111,14 @@ class ThermostatAccessory {
     _processStateUpdate() {
         debug('_processStateUpdate');
 
-        var tempInterval;
         if (!this.state) {
             this._turnRelay(false);
-            tempInterval = this.OFF_INTERVAL;
+            this._setNewTempInterval(this.OFF_INTERVAL);
         }
         else {
             this._readCurrentTemp();
-            tempInterval = this.ON_INTERVAL;
+            this._setNewTempInterval(this.ON_INTERVAL);
         }
-        this._setNewTempInterval(tempInterval);
     }
 
     _processRelayStatus() {

@@ -5,7 +5,7 @@ const utils = require('./src/utils');
 const boardService = require('./src/services/board.service');
 const config = require('./src/config/main');
 
-const local = false;
+const local = !false;
 const Arduino = local
     ? require('./src/node-arduino.mock.js')
     : require('node-arduino');

@@ -1,11 +1,11 @@
-var Accessory = require('hap-nodejs').Accessory;
-var Service = require('hap-nodejs').Service;
-var Characteristic = require('hap-nodejs').Characteristic;
-var uuid = require('hap-nodejs').uuid;
-var ThermostatAccessory = require('../models/thermostatAccessory.model');
-var thermostatConfig = require('../config/termostat.json');
+const Accessory = require('hap-nodejs').Accessory;
+const Service = require('hap-nodejs').Service;
+const Characteristic = require('hap-nodejs').Characteristic;
+const uuid = require('hap-nodejs').uuid;
+const ThermostatAccessory = require('../models/thermostatAccessory.model');
+const thermostatConfig = require('../config/termostat.json');
 
-var thermostats = [];
+const thermostats = [];
 
 thermostatConfig.forEach((thermostatParams) => {
 

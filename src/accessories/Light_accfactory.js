@@ -1,18 +1,18 @@
-var Accessory = require('hap-nodejs').Accessory;
-var Service = require('hap-nodejs').Service;
-var Characteristic = require('hap-nodejs').Characteristic;
-var uuid = require('hap-nodejs').uuid;
-var LightAccessory = require('../models/lightAccessory.model');
-var lightConfig = require('../config/light.json');
+const Accessory = require('hap-nodejs').Accessory;
+const Service = require('hap-nodejs').Service;
+const Characteristic = require('hap-nodejs').Characteristic;
+const uuid = require('hap-nodejs').uuid;
+const LightAccessory = require('../models/lightAccessory.model');
+const lightConfig = require('../config/light.json');
 
-var lights = [];
+const lights = [];
 
 lightConfig.forEach((lightParams) => {
 
-    var lightUUID = uuid.generate('hap-nodejs:accessories:light:' + lightParams.id);
-    var light = new Accessory(lightParams.name, lightUUID);
+    const lightUUID = uuid.generate('hap-nodejs:accessories:light:' + lightParams.id);
+    const light = new Accessory(lightParams.name, lightUUID);
 
-    var lightAccessory = new LightAccessory(lightParams);
+    const lightAccessory = new LightAccessory(lightParams);
 
     light.on('identify', lightAccessory.identify.bind(lightAccessory));
 

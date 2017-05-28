@@ -1,24 +1,24 @@
-var path = require('path');
-var storage = require('node-persist');
-var uuid = require('hap-nodejs').uuid;
-var Bridge = require('hap-nodejs').Bridge;
-var Accessory = require('hap-nodejs').Accessory;
-var accessoryLoader = require('hap-nodejs').AccessoryLoader;
-var config = require('./config/main');
+const path = require('path');
+const storage = require('node-persist');
+const uuid = require('hap-nodejs').uuid;
+const Bridge = require('hap-nodejs').Bridge;
+const Accessory = require('hap-nodejs').Accessory;
+const accessoryLoader = require('hap-nodejs').AccessoryLoader;
+const config = require('./config/main');
 
 module.exports = function () {
     // Initialize our storage system
     storage.initSync();
 
-    var bridge = new Bridge('Smart House Accessories', uuid.generate('Smart House Node Bridge'));
+    let bridge = new Bridge('Smart House Accessories', uuid.generate('Smart House Node Bridge'));
 
     bridge.on('identify', function (paired, callback) {
         console.log('Node Bridge identify');
         callback();
     });
 
-    var dir = path.join(__dirname, 'accessories');
-    var accessories = accessoryLoader.loadDirectory(dir);
+    let dir = path.join(__dirname, 'accessories');
+    let accessories = accessoryLoader.loadDirectory(dir);
 
     accessories.forEach(bridge.addBridgedAccessory.bind(bridge));
 
