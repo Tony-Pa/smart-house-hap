@@ -44,6 +44,10 @@ class Board {
         setTimeout(callback.bind(null, [20, 24, 26]), 500);
     }
 
+    readLightStatus(pin, callback) {
+        setTimeout(callback.bind(null, 512), 500);
+    }
+
     close() {
     }
 }

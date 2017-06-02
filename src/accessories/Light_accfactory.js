@@ -11,19 +11,24 @@ lightConfig.forEach((lightParams) => {
 
     const lightUUID = uuid.generate('hap-nodejs:accessories:light:' + lightParams.id);
     const light = new Accessory(lightParams.name, lightUUID);
+    const service = light.addService(Service.Lightbulb, lightParams.serviceName);
 
     const lightAccessory = new LightAccessory(lightParams);
 
     light.on('identify', lightAccessory.identify.bind(lightAccessory));
 
-    let service = light
-        .addService(Service.Lightbulb, lightParams.serviceName);
-
-    service.getCharacteristic(Characteristic.On)
+    const onCharacteristic = service.getCharacteristic(Characteristic.On)
         .on('set', lightAccessory.set.bind(lightAccessory))
         .on('get', lightAccessory.get.bind(lightAccessory));
 
-    lightAccessory.setCurrentStatusCallback(service.setCharacteristic.bind(service, Characteristic.On));
+    lightAccessory.setCurrentStatusCallback(function (newValue) {
+        let oldValue = onCharacteristic.value;
+        if (onCharacteristic.eventOnlyCharacteristic === true || oldValue !== newValue) {
+            onCharacteristic.value = newValue;
+            onCharacteristic.emit('change', { oldValue, newValue });
+        }
+
+    });
     lights.push(light);
 });
 

@@ -5,16 +5,20 @@ const utils = require('./src/utils');
 const boardService = require('./src/services/board.service');
 const config = require('./src/config/main');
 
-const local = !false;
+const local = false;
 const Arduino = local
     ? require('./src/node-arduino.mock.js')
     : require('node-arduino');
 
-const board = new Arduino.connect(config.mainBoard);
+const mainBoard = new Arduino.connect(config.mainBoard);
+const lightStatusBoard = new Arduino.connect(config.lightStatusBoard);
+const thermostatBoard = new Arduino.connect(config.thermostatBoard);
 
-boardService.add(board, config.mainBoard);
+boardService.add(mainBoard, config.mainBoard);
+boardService.add(lightStatusBoard, config.mainBoard);
+boardService.add(thermostatBoard, config.thermostatBoard);
 
-board.sp.open(() => {
+boardService.openAll(() => {
     setTimeout(() => {
         console.log("Starting HAP...");
 

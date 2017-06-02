@@ -4,9 +4,7 @@ const boardService = require('../services/board.service');
 const config = require('../config/main');
 
 const TOGGLE_LIGHT_TIMEOUT = 250;
-const LIGHT_CHECK_INTERVAL = 1000;
-const NUMBERS_OF_READS = 10;
-const THRESHOLD_LIGHT_VALUE = 200;
+const THRESHOLD_LIGHT_VALUE = 100;
 
 class LightAccessory {
     constructor(lightParams) {
@@ -14,9 +12,9 @@ class LightAccessory {
         this.apin = lightParams.apin;
 
         this.board = boardService.get(config.mainBoard);
-        this.board.pinModeSetDefault(this.pin, this.board.OUTPUT, this.board.HIGH);
+        this.lightStatusBoard = boardService.get(config.lightStatusBoard);
 
-        setTimeout(this._checkTimeout.bind(this), LIGHT_CHECK_INTERVAL * Math.random());
+        this.board.pinModeSetDefault(this.pin, this.board.OUTPUT, this.board.HIGH);
     }
 
     identify(paired, callback) {
@@ -41,18 +39,22 @@ class LightAccessory {
 
     getLightStatus(callback) {
         debug('getLightStatus');
-        this.board.analogReadAverage(this.apin, NUMBERS_OF_READS, (value) => {
-            debug('getLightStatus - analogReadAverage', value);
+        this.lightStatusBoard.readLightStatus(this.apin, (value) => {
+            debug('getLightStatus - readLightStatus', value);
+
+            this.lightStatusBoard._registerCallback(this.apin, this.setCurrentStatus.bind(this));
             callback(null, Number(THRESHOLD_LIGHT_VALUE < value));
         });
     }
 
-    setCurrentStatus(err, value) {
-        debug('setCurrentStatus', value);
-        this.currentStatusCallback(value);
+    setCurrentStatus(value) {
+        // debug('setCurrentStatus', value, Number(THRESHOLD_LIGHT_VALUE < value));
+        this.currentStatusCallback(Number(THRESHOLD_LIGHT_VALUE < value));
     }
 
     setCurrentStatusCallback(callback) {
+        debug('setCurrentStatusCallback');
+
         this.currentStatusCallback = callback;
     }
 
@@ -63,16 +65,6 @@ class LightAccessory {
         setTimeout(() => {
             this.board.digitalWrite(this.pin, this.board.HIGH);
         }, TOGGLE_LIGHT_TIMEOUT);
-    }
-
-    _checkTimeout() {
-        debug('_checkTimeout');
-        setInterval(this._checkInterval.bind(this), LIGHT_CHECK_INTERVAL)
-    }
-
-    _checkInterval() {
-        debug('_setCheckInterval');
-        this.getLightStatus(this.setCurrentStatus.bind(this));
     }
 }
 

@@ -1,6 +1,8 @@
 {
     "pincode": "031-45-154",
-    "username": "12:11:BB:22:C3:4D",
+    "username": "1A:1B:BB:22:C3:4D",
     "port": 51826,
-    "mainBoard": "/dev/tty.usbmodemFD121"
+    "mainBoard": "/dev/tty.wchusbserialfd120",
+    "thermostatBoard": "/dev/tty.usbmodemFD121",
+    "lightStatusBoard": "/dev/tty.usbmodemFD123"
 }

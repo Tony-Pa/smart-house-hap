@@ -3,6 +3,7 @@
   "version": "0.0.0",
   "description": "Smart home project based on HAP-NodeJS",
   "dependencies": {
+    "async": "^2.4.1",
     "debug": "^2.3.3",
     "hap-nodejs": "^0.4.25",
     "node-arduino": "github:tony-pa/node-arduino",
