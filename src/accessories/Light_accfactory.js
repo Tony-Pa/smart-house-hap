@@ -27,7 +27,6 @@ lightConfig.forEach((lightParams) => {
             onCharacteristic.value = newValue;
             onCharacteristic.emit('change', { oldValue, newValue });
         }
-
     });
     lights.push(light);
 });

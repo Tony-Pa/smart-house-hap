@@ -3,6 +3,6 @@
     "username": "1A:1B:BB:22:C3:4D",
     "port": 51826,
     "mainBoard": "/dev/tty.wchusbserialfd120",
-    "thermostatBoard": "/dev/tty.usbmodemFD121",
-    "lightStatusBoard": "/dev/tty.usbmodemFD123"
+    "thermostatBoard": "/dev/tty.wchusbserialfd120",
+    "lightStatusBoard": "/dev/tty.wchusbserialfd120"
 }

@@ -15,7 +15,7 @@ class ThermostatAccessory {
         this.pins = thermostatParams.pins;
         this.tempSensors = thermostatParams.tempSensors;
 
-        this.board = boardService.get(config.mainBoard);
+        this.board = boardService.get(config.thermostatBoard);
         this.board.pinModeSetDefault(this.pins.relay, this.board.OUTPUT, this.board.HIGH);
 
         this.storageGet('temp', (err, value) => {
