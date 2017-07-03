@@ -8,9 +8,8 @@ const thermostatConfig = require('../config/termostat.json');
 const thermostats = [];
 
 thermostatConfig.forEach((thermostatParams) => {
-
     let thermostatUUID = uuid.generate('hap-nodejs:accessories:thermostat:' + thermostatParams.id);
-    let thermostat = new Accessory(thermostatParams.name, thermostatUUID);
+    let thermostat = new Accessory(thermostatParams.serviceName, thermostatUUID);
     let thermostatAccessory = new ThermostatAccessory(thermostatParams);
 
     thermostat.on('identify', thermostatAccessory.identify.bind(thermostatAccessory));

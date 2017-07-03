@@ -84,6 +84,13 @@ class ThermostatAccessory {
     _readCurrentTemp(callback) {
         debug('_readCurrentTemp');
         this.board.readTemp(this.pins.temp, this.tempSensors, (value) => {
+            debug('board.readTemp value:', value);
+
+            if (!(value instanceof Array)) {
+              debug('board.readTemp value is not array:');
+              callback && callback(null, 0);
+              return;
+            }
 
             let sum = 0;
             value.forEach((elem) => sum += parseFloat(elem, 10));

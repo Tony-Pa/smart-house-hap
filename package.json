@@ -5,7 +5,7 @@
   "dependencies": {
     "async": "^2.4.1",
     "debug": "^2.3.3",
-    "hap-nodejs": "^0.4.25",
+    "hap-nodejs": "^0.4.27",
     "node-arduino": "github:tony-pa/node-arduino",
     "node-persist": "^0.0.11"
   },

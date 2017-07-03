@@ -1,6 +1,6 @@
 "use strict";
 
-const bridgetCore = require('./src/bridgedCore');
+const core = require('./src/Core');
 const utils = require('./src/utils');
 const boardService = require('./src/services/board.service');
 const config = require('./src/config/main');
@@ -22,7 +22,7 @@ boardService.openAll(() => {
     setTimeout(() => {
         console.log("Starting HAP...");
 
-        bridgetCore();
+        core();
 
         utils.printPincode(config.pincode);
     }, 1000);

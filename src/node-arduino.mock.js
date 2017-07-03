@@ -48,6 +48,12 @@ class Board {
         setTimeout(callback.bind(null, 512), 500);
     }
 
+    setLightRelay(pin, val) {
+    }
+
+    _registerCallback() {
+    }
+
     close() {
     }
 }

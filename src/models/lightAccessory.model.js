@@ -4,17 +4,17 @@ const boardService = require('../services/board.service');
 const config = require('../config/main');
 
 const TOGGLE_LIGHT_TIMEOUT = 250;
-const THRESHOLD_LIGHT_VALUE = 100;
+const THRESHOLD_LIGHT_VALUE = 400;
 
 class LightAccessory {
     constructor(lightParams) {
         this.pin = lightParams.pin;
         this.apin = lightParams.apin;
 
-        this.board = boardService.get(config.mainBoard);
+        // this.board = boardService.get(config.mainBoard);
         this.lightStatusBoard = boardService.get(config.lightStatusBoard);
 
-        this.board.pinModeSetDefault(this.pin, this.board.OUTPUT, this.board.HIGH);
+        // this.lightStatusBoard.pinModeSetDefault(this.pin, this.lightStatusBoard.OUTPUT, this.lightStatusBoard.HIGH);
     }
 
     identify(paired, callback) {
@@ -40,7 +40,7 @@ class LightAccessory {
     getLightStatus(callback) {
         debug('getLightStatus');
         this.lightStatusBoard.readLightStatus(this.apin, (value) => {
-            debug('getLightStatus - readLightStatus', value);
+            debug('getLightStatus - readLightStatus', this.apin, ' - ', value);
 
             this.lightStatusBoard._registerCallback(this.apin, this.setCurrentStatus.bind(this));
             callback(null, Number(THRESHOLD_LIGHT_VALUE < value));
@@ -60,10 +60,10 @@ class LightAccessory {
 
     _toggleLight() {
         debug('toggleLight pin: ', this.pin);
-        this.board.digitalWrite(this.pin, this.board.LOW);
+        this.lightStatusBoard.setLightRelay(this.pin, this.lightStatusBoard.LOW);
 
         setTimeout(() => {
-            this.board.digitalWrite(this.pin, this.board.HIGH);
+            this.lightStatusBoard.setLightRelay(this.pin, this.lightStatusBoard.HIGH);
         }, TOGGLE_LIGHT_TIMEOUT);
     }
 }
