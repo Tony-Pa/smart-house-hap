@@ -11,10 +11,7 @@ class LightAccessory {
         this.pin = lightParams.pin;
         this.apin = lightParams.apin;
 
-        // this.board = boardService.get(config.mainBoard);
         this.lightStatusBoard = boardService.get(config.lightStatusBoard);
-
-        // this.lightStatusBoard.pinModeSetDefault(this.pin, this.lightStatusBoard.OUTPUT, this.lightStatusBoard.HIGH);
     }
 
     identify(paired, callback) {
