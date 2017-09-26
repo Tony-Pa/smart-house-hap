@@ -82,9 +82,9 @@ class ThermostatAccessory {
     }
 
     _readCurrentTemp(callback) {
-        debug('_readCurrentTemp');
+        debug('_readCurrentTemp', this.pins.temp);
         this.board.readTemp(this.pins.temp, this.tempSensors, (value) => {
-            debug('board.readTemp value:', value);
+            debug('board.readTemp value:', this.pins.temp, '-', value);
 
             if (!(value instanceof Array)) {
               debug('board.readTemp value is not array:');
@@ -93,9 +93,13 @@ class ThermostatAccessory {
             }
 
             let sum = 0;
-            value.forEach((elem) => sum += parseFloat(elem, 10));
+            value.forEach((elem) => sum += parseFloat(elem));
 
             this.currentTemp = Math.round(sum / value.length);
+
+            if (this.currentTemp === -127) {
+              return callback('wrong temp');
+            }
 
             this.setCurrentTemp(this.currentTemp);
 

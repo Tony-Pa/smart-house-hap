@@ -3,6 +3,6 @@
     "username": "1A:2B:3C:4D:5E:02",
     "port": 51826,
     "mainBoard": "/dev/ttyUSB1",
-    "thermostatBoard": "/dev/ttyUSB1",
-    "lightStatusBoard": "/dev/ttyUSB0"
+    "thermostatBoard": "/dev/ttyUSB0",
+    "lightStatusBoard": "/dev/ttyUSB1"
 }

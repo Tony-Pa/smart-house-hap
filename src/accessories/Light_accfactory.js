@@ -20,13 +20,14 @@ lightConfig.forEach((lightParams) => {
         .on('set', lightAccessory.set.bind(lightAccessory))
         .on('get', lightAccessory.get.bind(lightAccessory));
 
-    lightAccessory.setCurrentStatusCallback(function (newValue) {
+    lightAccessory.setCurrentStatusCallback((newValue) => {
         let oldValue = onCharacteristic.value;
         if (onCharacteristic.eventOnlyCharacteristic === true || oldValue !== newValue) {
             onCharacteristic.value = newValue;
             onCharacteristic.emit('change', { oldValue, newValue });
         }
     });
+
     lights.push(light);
 });
 
