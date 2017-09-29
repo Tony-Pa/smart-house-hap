@@ -98,7 +98,7 @@ class ThermostatAccessory {
             this.currentTemp = Math.round(sum / value.length);
 
             if (this.currentTemp === -127) {
-              return callback('wrong temp');
+              return callback && callback('wrong temp');
             }
 
             this.setCurrentTemp(this.currentTemp);

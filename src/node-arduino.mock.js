@@ -51,6 +51,9 @@ class Board {
     setLightRelay(pin, val) {
     }
 
+    toggleLightRelay(pin) {
+    }
+
     _registerCallback() {
     }
 
