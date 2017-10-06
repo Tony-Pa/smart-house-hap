@@ -4,5 +4,5 @@
     "port": 51826,
     "mainBoard": "/dev/ttyUSB1",
     "thermostatBoard": "/dev/ttyUSB0",
-    "lightStatusBoard": "/dev/ttyUSB1"
+    "lightStatusBoard": "/dev/ttyACM0"
 }

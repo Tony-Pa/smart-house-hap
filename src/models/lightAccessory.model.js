@@ -4,6 +4,7 @@ const boardService = require('../services/board.service');
 const config = require('../config/main');
 
 const THRESHOLD_LIGHT_VALUE = 400;
+const singleRelaySwitchMode = false;
 
 class LightAccessory {
     constructor(lightParams) {
@@ -27,13 +28,19 @@ class LightAccessory {
         debug('SET', this.pin, newValue);
         if (this.status !== newValue) {
             debug('toggleLight pin: ', this.pin);
-            this.lightStatusBoard.toggleLightRelay(this.pin);
+
+            if (singleRelaySwitchMode) {
+                this.lightStatusBoard.toggleRelay(this.pin);
+            }
+            else {
+                this.lightStatusBoard.toggleLightRelay(this.pin);
+            }
         }
         callback();
     }
 
     setStatus(value) {
-        return this.status = Number(THRESHOLD_LIGHT_VALUE < value);
+        return this.status = THRESHOLD_LIGHT_VALUE < value;
     }
 
     getLightStatus(callback) {
