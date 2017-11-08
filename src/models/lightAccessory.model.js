@@ -4,7 +4,7 @@ const boardService = require('../services/board.service');
 const config = require('../config/main');
 
 const THRESHOLD_LIGHT_VALUE = 400;
-const singleRelaySwitchMode = false;
+const singleRelaySwitchMode = true;
 
 class LightAccessory {
     constructor(lightParams) {
