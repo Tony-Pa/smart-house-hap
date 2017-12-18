@@ -1,5 +1,5 @@
 "use strict";
-const debug = require('debug')('TSA');
+const debug = require('debug')('SH:TSA');
 const boardService = require('../services/board.service');
 const config = require('../config/main');
 const storage = require('node-persist');
@@ -30,6 +30,10 @@ class ThermostatAccessory {
     identify(paired, callback) {
         debug('identify', this.id, paired);
         callback();
+    }
+
+    getBoard() {
+        return boardService.get(config.lightStatusBoard);
     }
 
     getState(callback) {

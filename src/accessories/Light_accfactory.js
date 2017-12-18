@@ -20,13 +20,34 @@ lightConfig.forEach((lightParams) => {
         .on('set', lightAccessory.set.bind(lightAccessory))
         .on('get', lightAccessory.get.bind(lightAccessory));
 
-    lightAccessory.setCurrentStatusCallback((newValue) => {
+    let timeoutId;
+    lightAccessory.setCurrentStatusCallback(() => {
+        setOnCharacteristic(true);
+
+        clearTimeout(timeoutId);
+        timeoutId = setTimeout(() => setOnCharacteristic(false), 500);
+    });
+
+    if (lightParams.rgb) {
+        service.addCharacteristic(Characteristic.Brightness)
+            .on('set', lightAccessory.setBrightness.bind(lightAccessory));
+
+        service.addCharacteristic(Characteristic.Saturation)
+            .on('set', lightAccessory.setSaturation.bind(lightAccessory));
+
+        service.addCharacteristic(Characteristic.Hue)
+            .on('set', lightAccessory.setHue.bind(lightAccessory));
+    }
+
+
+    function setOnCharacteristic(newValue) {
         let oldValue = onCharacteristic.value;
         if (onCharacteristic.eventOnlyCharacteristic === true || oldValue !== newValue) {
             onCharacteristic.value = newValue;
             onCharacteristic.emit('change', { oldValue, newValue });
+            lightAccessory.status = newValue;
         }
-    });
+    }
 
     lights.push(light);
 });

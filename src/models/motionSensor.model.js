@@ -1,5 +1,5 @@
 "use strict";
-const debug = require('debug')('MS');
+const debug = require('debug')('SH:MS');
 const boardService = require('../services/board.service');
 const config = require('../config/main');
 
@@ -8,8 +8,8 @@ class MotionSensorAccessory {
         this.pin = motionParams.pin;
         this.status = false;
 
-        this.motionBoard = boardService.get(config.thermostatBoard);
-        this.motionBoard._registerCallback(this.pin, this.setCurrentStatus.bind(this));
+        boardService.get(config.thermostatBoard)
+            ._registerCallback(this.pin, this.setCurrentStatus.bind(this));
     }
 
     identify(paired, callback) {
@@ -28,7 +28,7 @@ class MotionSensorAccessory {
     }
 
     setCurrentStatus(value) {
-        debug('setCurrentStatus', value);
+        // debug('setCurrentStatus', value);
         this.currentStatusCallback(value);
     }
 

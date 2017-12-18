@@ -24,6 +24,18 @@ boardService.openAll(() => {
 
         core();
 
+        let timeoutId = {};
+        setInterval(() => {
+            Object.keys(boardService.list).forEach((key) => {
+                // console.log('healthCheck', key);
+                boardService.healthCheck(key,  () => {
+                    // console.log('recieved HC',key);
+                    clearTimeout(timeoutId[key]);
+                    timeoutId[key] = setTimeout(() => {throw(new Error('healthCheck fails'))}, 10000);
+                });
+            });
+        }, 2000);
+
         utils.printPincode(config.pincode);
     }, 1000);
 });

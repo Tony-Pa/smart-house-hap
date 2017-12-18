@@ -12,9 +12,13 @@ module.exports = {
         let openMethodsArr = [];
 
         Object.keys(this.list).forEach((key) => {
-            openMethodsArr.push(this.get(key).sp.open.bind(this.get(key).sp));
+            const serialPort = this.get(key).sp;
+            openMethodsArr.push(serialPort.open.bind(serialPort));
         });
 
         async.parallel(openMethodsArr, cb);
+    },
+    healthCheck(id, cb) {
+        this.get(id).healthCheck(cb)
     }
 };
