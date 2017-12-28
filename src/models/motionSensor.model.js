@@ -23,7 +23,7 @@ class MotionSensorAccessory {
     }
 
     set(value, callback) {
-        debug('SET', this.pin, value);
+        // debug('SET', this.pin, value);
         callback();
     }
 

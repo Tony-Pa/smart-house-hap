@@ -21,6 +21,11 @@ class LightAccessory {
             this.saturation = 0;
             this.brightness = 0;
             //     this.rgbBoard = boardService.get(config.rgbBoard);
+
+            this.lightStatusBoard.pinMode(this.rgb.r, this.lightStatusBoard.OUTPUT);
+            this.lightStatusBoard.pinMode(this.rgb.g, this.lightStatusBoard.OUTPUT);
+            this.lightStatusBoard.pinMode(this.rgb.b, this.lightStatusBoard.OUTPUT);
+
         }
 
         this.status = false;
@@ -50,6 +55,13 @@ class LightAccessory {
                 this.lightStatusBoard.toggleLightRelay(this.pin);
             }
         }
+        this.status = newValue;
+
+        if (newValue) {
+            clearTimeout(this.set.timeoutId);
+            this.set.timeoutId = setTimeout(() => {this.status = false}, 1000);
+        }
+
         callback();
     }
 
@@ -69,13 +81,18 @@ class LightAccessory {
     }
 
     setRGB(callback) {
+        let rgb = utils.HSBtoRGB([this.hue, this.saturation, this.brightness]);
+
         debug('setRGB', this.hue, this.saturation, this.brightness, this.name);
+        debug('RGB', rgb, this.name);
 
-        const rgb = utils.HSVtoRGB(this.hue, this.saturation, this.brightness);
+        rgb = utils.fixRGB(rgb);
 
-        this.lightStatusBoard.analogWrite(this.rgb.r, rgb.r);
-        this.lightStatusBoard.analogWrite(this.rgb.g, rgb.g);
-        this.lightStatusBoard.analogWrite(this.rgb.b, rgb.b);
+        debug('fixed RGB', rgb, this.name);
+
+        this.lightStatusBoard.analogWrite(this.rgb.r, rgb[0]);
+        this.lightStatusBoard.analogWrite(this.rgb.g, rgb[1]);
+        this.lightStatusBoard.analogWrite(this.rgb.b, rgb[2]);
         callback();
     }
 

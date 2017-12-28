@@ -25,7 +25,7 @@ lightConfig.forEach((lightParams) => {
         setOnCharacteristic(true);
 
         clearTimeout(timeoutId);
-        timeoutId = setTimeout(() => setOnCharacteristic(false), 500);
+        timeoutId = setTimeout(() => setOnCharacteristic(false), 1000);
     });
 
     if (lightParams.rgb) {

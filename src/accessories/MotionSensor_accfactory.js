@@ -21,21 +21,11 @@ motionConfig.forEach((motionParams) => {
         .on('get', motionAccessory.get.bind(motionAccessory));
 
     let timeoutId;
-    let accum = 0;
     motionAccessory.setCurrentStatusCallback(() => {
-        if (!accum) {
-            setTimeout(() => {
-                if (accum > 5) {
-                    service.setCharacteristic(Characteristic.MotionDetected, true);
+        service.setCharacteristic(Characteristic.MotionDetected, true);
 
-                    clearTimeout(timeoutId);
-                    timeoutId = setTimeout(() => service.setCharacteristic(Characteristic.MotionDetected, false), 10000);
-                }
-                accum = 0;
-            }, 500);
-        }
-
-        accum++;
+        clearTimeout(timeoutId);
+        timeoutId = setTimeout(() => service.setCharacteristic(Characteristic.MotionDetected, false), 10000);
     });
 
     motionSensors.push(motionSensor);

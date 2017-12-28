@@ -27,6 +27,25 @@ fanConfig.forEach((fanParams) => {
             onCharacteristic.emit('change', { oldValue, newValue });
         }
     });
+
+    let timeoutId;
+    fanAccessory.setCurrentStatusCallback(() => {
+        setOnCharacteristic(true);
+
+        clearTimeout(timeoutId);
+        timeoutId = setTimeout(() => setOnCharacteristic(false), 1000);
+    });
+
+    function setOnCharacteristic(newValue) {
+        let oldValue = onCharacteristic.value;
+        if (onCharacteristic.eventOnlyCharacteristic === true || oldValue !== newValue) {
+            onCharacteristic.value = newValue;
+            onCharacteristic.emit('change', { oldValue, newValue });
+            fanAccessory.status = newValue;
+        }
+    }
+
+
     fans.push(fan);
 });
 
