@@ -44,7 +44,7 @@ class LightAccessory {
     }
 
     set(newValue, callback) {
-        debug('SET', this.pin, newValue, this.status);
+        debug('SET', newValue, this.status, this.name);
         if (this.status !== newValue) {
             debug('toggleLight pin: ', this.pin);
 
@@ -56,11 +56,6 @@ class LightAccessory {
             }
         }
         this.status = newValue;
-
-        if (newValue) {
-            clearTimeout(this.set.timeoutId);
-            this.set.timeoutId = setTimeout(() => {this.status = false}, 1000);
-        }
 
         callback();
     }
@@ -99,7 +94,6 @@ class LightAccessory {
     setStatus(value) {
         // debug('setStatus', THRESHOLD_LIGHT_VALUE < value, this.name);
         return this.status = !!value;
-        // return this.status = THRESHOLD_LIGHT_VALUE < value;
     }
 
     getLightStatus(callback) {
@@ -116,14 +110,17 @@ class LightAccessory {
     }
 
     setCurrentStatus(value) {
+
+        debug('setCurrentStatus', value, this.status, this.name);
         // debug('setCurrentStatus', value, Number(THRESHOLD_LIGHT_VALUE < value));
-        this.currentStatusCallback(this.setStatus(value));
+        if (this.status !== value) {
+            this.setStatus(value);
+            this._setOnCharacteristic(value);
+        }
     }
 
-    setCurrentStatusCallback(callback) {
-        debug('setCurrentStatusCallback');
-
-        this.currentStatusCallback = callback;
+    setOnCharacteristic(setOnCharacteristic) {
+        this._setOnCharacteristic = setOnCharacteristic;
     }
 }
 

@@ -5,6 +5,8 @@ const utils = require('./src/utils');
 const boardService = require('./src/services/board.service');
 const config = require('./src/config/main');
 
+const automationService = require('./src/services/automation.service');
+
 const local = false;
 const Arduino = local
     ? require('./src/node-arduino.mock.js')
@@ -23,6 +25,8 @@ boardService.openAll(() => {
         console.log("Starting HAP...");
 
         core();
+
+        automationService.startAll();
 
         let timeoutId = {};
         setInterval(() => {

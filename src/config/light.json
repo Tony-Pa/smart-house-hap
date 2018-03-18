@@ -74,7 +74,28 @@
         "id": "00:00:00:00:00:0F",
         "serviceName": "Свет в ванной на первом этаже",
         "pin": 28,
-        "apin": 8
+        "apin": 8,
+        "automations": [
+            {
+                "id": "00:00:00:02:01:00",
+                "condition": {
+                    "On": false
+                },
+                "action": {
+                    "On": false
+                },
+                "timeout": 120000
+            },
+            {
+                "id": "00:00:00:00:01:0F",
+                "condition": {
+                    "On": false
+                },
+                "action": {
+                    "On": false
+                }
+            }
+        ]
     },
     {
         "id": "00:00:00:00:01:0F",
@@ -86,7 +107,28 @@
         "id": "00:00:00:00:00:10",
         "serviceName": "Свет в ванной на втором этаже",
         "pin": 33,
-        "apin": 31
+        "apin": 31,
+        "automations": [
+            {
+                "id": "00:00:00:02:00:00",
+                "condition": {
+                    "On": false
+                },
+                "action": {
+                    "On": false
+                },
+                "timeout": 120000
+            },
+            {
+                "id": "00:00:00:00:01:10",
+                "condition": {
+                    "On": false
+                },
+                "action": {
+                    "On": false
+                }
+            }
+        ]
     },
     {
         "id": "00:00:00:00:01:10",

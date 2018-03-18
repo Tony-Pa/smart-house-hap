@@ -2,8 +2,11 @@ const Accessory = require('hap-nodejs').Accessory;
 const Service = require('hap-nodejs').Service;
 const Characteristic = require('hap-nodejs').Characteristic;
 const uuid = require('hap-nodejs').uuid;
+
 const MotionAccessory = require('../models/motionSensor.model');
 const motionConfig = require('../config/motionSensor.json');
+const accessoriesService = require('../services/accessories.service');
+const automationService = require('../services/automation.service');
 
 const motionSensors = [];
 
@@ -28,7 +31,14 @@ motionConfig.forEach((motionParams) => {
         timeoutId = setTimeout(() => service.setCharacteristic(Characteristic.MotionDetected, false), 10000);
     });
 
+    if (motionParams.automations) {
+        motionParams.automations.forEach((automation) => {
+            automationService.add(automationService.create(automation, service))
+        });
+    }
+
     motionSensors.push(motionSensor);
+    accessoriesService.add(service, motionParams.id);
 });
 
 module.exports = motionSensors;
