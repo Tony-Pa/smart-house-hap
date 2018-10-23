@@ -15,7 +15,6 @@ module.exports = {
     this.get().forEach((cb) => cb())
   },
   create(_automation_, _service_) {
-    const automationId = generateAutomationID(_automation_);
     return function (automation, service) {
       const { key: conditionCharacteristic, value: condition } = splitKeyValue(automation.condition);
       let stopAutomation = false;
@@ -24,13 +23,7 @@ module.exports = {
         .on('set', function (value) {
 
           if (checkCondition(value, condition) && !stopAutomation) {
-            cacheTimeout(automationId, () => {
-              const {key: actionCharacteristic, value: actionValue} = splitKeyValue(automation.action);
-
-              accessoriesService.get(automation.id)
-                .setCharacteristic(Characteristic[actionCharacteristic], actionValue);
-
-            }, automation.timeout);
+            proceedWithAction(automation);
           }
 
           if (automation.stop) {
@@ -46,6 +39,12 @@ module.exports = {
                     cacheTimeout(stopAutomationId, () => { stopAutomation = false; }, stop.timeout);
                   }
                 })
+            });
+          }
+
+          if (automation.next) {
+            automation.next.forEach((next) => {
+              proceedWithAction(next);
             });
           }
         });
@@ -91,4 +90,15 @@ function splitKeyValue(obj) {
 function cacheTimeout(automationId, callback, timeout) {
   clearTimeout(timeoutCache[automationId]);
   timeoutCache[automationId] = setTimeout(callback, timeout || 0);
+}
+
+function proceedWithAction(action) {
+  let nextAutomationId = generateAutomationID(action);
+  cacheTimeout(nextAutomationId, () => {
+    const {key: characteristicId, value: value} = splitKeyValue(action.action);
+
+    accessoriesService.get(action.id)
+      .setCharacteristic(Characteristic[characteristicId], value);
+
+  }, action.timeout);
 }
