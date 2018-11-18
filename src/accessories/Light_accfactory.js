@@ -8,9 +8,7 @@ const lightConfig = require('../config/light.json');
 const accessoriesService = require('../services/accessories.service');
 const automationService = require('../services/automation.service');
 
-const lights = [];
-
-lightConfig.forEach((lightParams) => {
+module.exports = lightConfig.map((lightParams) => {
     const lightUUID = uuid.generate('hap-nodejs:accessories:light:' + lightParams.id);
     const light = new Accessory(lightParams.serviceName, lightUUID);
     const service = light.addService(Service.Lightbulb, lightParams.serviceName);
@@ -42,8 +40,7 @@ lightConfig.forEach((lightParams) => {
         });
     }
 
-    lights.push(light);
     accessoriesService.add(service, lightParams.id);
-});
 
-module.exports = lights;
+    return light;
+});

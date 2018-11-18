@@ -8,9 +8,10 @@ const termHumConfig = require('../config/termHum.json');
 const accessoriesService = require('../services/accessories.service');
 const automationService = require('../services/automation.service');
 
-const tempsHumSensors = [];
 
-termHumConfig.forEach((params) => {
+TempHumAccessory.initDB();
+
+module.exports = termHumConfig.map((params) => {
     const tempHumAccessory = new TempHumAccessory(params);
 
     const sensorUUID = uuid.generate('hap-nodejs:accessories:tempsHumSensors' + params.id);
@@ -43,7 +44,5 @@ termHumConfig.forEach((params) => {
     }
 
     accessoriesService.add(humService, params.id);
-    tempsHumSensors.push(sensor);
+    return sensor;
 });
-
-module.exports = tempsHumSensors;

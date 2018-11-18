@@ -1,10 +1,28 @@
 "use strict";
+const Sequelize = require('sequelize');
 const debug = require('debug')('SH:TH');
 const boardService = require('../services/board.service');
 const config = require('../config/main');
 
+const sequelize = new Sequelize(config.db);
+
 class TemperatureHumidityAccessory {
+    static getDB() {
+        return this.db;
+    }
+
+    static initDB() {
+        this.db = sequelize.define('tempAndHum', {
+            deviceId: Sequelize.STRING,
+            temp: Sequelize.FLOAT,
+            hum: Sequelize.FLOAT,
+        });
+
+        this.db.sync();
+    }
+
     constructor(params) {
+        this.deviceId = params.id;
         this.pin = params.pin;
         this.board = boardService.get(config.thermostatBoard);
 
@@ -60,9 +78,13 @@ class TemperatureHumidityAccessory {
                 debug('board.readTempHum value is not array:');
                 return;
             }
+            const [temp, hum] = value;
+            const deviceId = this.deviceId;
 
-            this.setHum(parseFloat(value[0]));
-            this.setTemp(parseFloat(value[1]));
+            this.setHum(parseFloat(temp));
+            this.setTemp(parseFloat(hum));
+
+            TemperatureHumidityAccessory.getDB().create({ deviceId, temp, hum });
         });
     }
 }

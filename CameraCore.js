@@ -11,8 +11,8 @@ storage.initSync();
 var cameraConfig = {
     "name": "Camera Name",
     "videoConfig": {
-      "source": "-re -i rtsp://admin:Antoha-89@192.168.88.12:554/Streaming/Channels/101",
-      "stillImageSource": "-i http://192.168.88.12/Streaming/Channels/101/picture",
+      "source": "-re -i rtsp://admin:Antoha-89@192.168.88.22:554/Streaming/Channels/101",
+      "stillImageSource": "-i http://192.168.88.22/Streaming/Channels/101/picture",
       "maxStreams": 1,
       "maxWidth": 1920,
       "maxHeight": 1080,

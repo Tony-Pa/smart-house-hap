@@ -4,5 +4,6 @@
     "port": 51826,
     "mainBoard": "/dev/ttyUSB1",
     "thermostatBoard": "/dev/ttyUSB0",
-    "lightStatusBoard": "/dev/ttyACM0"
+    "lightStatusBoard": "/dev/ttyACM0",
+    "db": "sqlite:db/smart.db"
 }
