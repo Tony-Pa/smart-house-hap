@@ -4,23 +4,7 @@ const debug = require('debug')('SH:TH');
 const boardService = require('../services/board.service');
 const config = require('../config/main');
 
-const sequelize = new Sequelize(config.db);
-
 class TemperatureHumidityAccessory {
-    static getDB() {
-        return this.db;
-    }
-
-    static initDB() {
-        this.db = sequelize.define('tempAndHum', {
-            deviceId: Sequelize.STRING,
-            temp: Sequelize.FLOAT,
-            hum: Sequelize.FLOAT,
-        });
-
-        this.db.sync();
-    }
-
     constructor(params) {
         this.deviceId = params.id;
         this.pin = params.pin;
@@ -83,8 +67,6 @@ class TemperatureHumidityAccessory {
 
             this.setHum(parseFloat(temp));
             this.setTemp(parseFloat(hum));
-
-            TemperatureHumidityAccessory.getDB().create({ deviceId, temp, hum });
         });
     }
 }

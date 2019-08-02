@@ -8,9 +8,6 @@ const termHumConfig = require('../config/termHum.json');
 const accessoriesService = require('../services/accessories.service');
 const automationService = require('../services/automation.service');
 
-
-TempHumAccessory.initDB();
-
 module.exports = termHumConfig.map((params) => {
     const tempHumAccessory = new TempHumAccessory(params);
 

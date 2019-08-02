@@ -4,7 +4,7 @@ const boardService = require('../services/board.service');
 const config = require('../config/main');
 const utils = require('../utils');
 
-// const THRESHOLD_LIGHT_VALUE = 400;
+const THRESHOLD_LIGHT_VALUE = 400;
 const singleRelaySwitchMode = true;
 
 class LightAccessory {
@@ -28,8 +28,13 @@ class LightAccessory {
 
         }
 
-        this.status = false;
-        this.lightStatusBoard._registerCallback(this.apin, this.setCurrentStatus.bind(this));
+        // this.status = false;
+
+        this.lightStatusBoard
+            .sp.on('open', () => {
+                setTimeout(() => this.getLightStatus(() => {}), 1000);
+                // this.lightStatusBoard._registerCallback(this.apin, this.setCurrentStatus.bind(this))
+            });
     }
 
     identify(paired, callback) {
@@ -105,7 +110,7 @@ class LightAccessory {
             debug('getLightStatus - readLightStatus', this.apin, ' - ', value);
 
             this.lightStatusBoard._registerCallback(this.apin, this.setCurrentStatus.bind(this));
-            callback(null, this.setStatus(value));
+            callback(null, this.setStatus(value > THRESHOLD_LIGHT_VALUE));
         });
     }
 

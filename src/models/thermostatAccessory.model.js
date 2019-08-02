@@ -1,19 +1,26 @@
 "use strict";
 const debug = require('debug')('SH:TSA');
+const Characteristic = require('hap-nodejs').Characteristic;
+
 const boardService = require('../services/board.service');
 const config = require('../config/main');
-const storage = require('node-persist');
+const accessoriesService = require('../services/accessories.service');
+// const storage = require('node-persist');
 
 class ThermostatAccessory {
     constructor(thermostatParams) {
         this.OFF_INTERVAL = 600000; // 10 min
         this.ON_INTERVAL = 60000; // 1 min
         this.TEMP_DELTA = 1;
+        this.HUM_DELTA = 5;
         this.currentTemp = 0;
         this.relayStatus = false;
         this.id = thermostatParams.id;
         this.pins = thermostatParams.pins;
+        this.tempHum = thermostatParams.tempHum;
+        this.fan = thermostatParams.fan;
         this.tempSensors = thermostatParams.tempSensors;
+        this.fanTurnedOnProgramaticaly = false;
 
         this.board = boardService.get(config.thermostatBoard);
         this.board.pinModeSetDefault(this.pins.relay, this.board.OUTPUT, this.board.HIGH);
@@ -21,10 +28,18 @@ class ThermostatAccessory {
         this.storageGet('temp', (err, value) => {
             this.temp = value || 24;
         });
+        this.storageGet('hum', (err, value) => {
+            this.humidity = value || 30;
+        });
         this.storageGet('state', (err, value) => {
             this.state = value || 0;
             this._processStateUpdate();
         });
+
+        if (this.tempHum) {
+            setTimeout(() => this._readCurrentHumidity(), 1000);
+            setInterval(this._readCurrentHumidity.bind(this), 30000);
+        }
     }
 
     identify(paired, callback) {
@@ -85,6 +100,43 @@ class ThermostatAccessory {
         this.currentTempCallback = callback;
     }
 
+    getHumidity(callback) {
+        let hum = 0;
+        this.storageGet('hum', (humidity) => hum = humidity);
+
+        debug('getHumidity', hum);
+        this.storageGet('hum', callback);
+    }
+
+    setHumidity(value, callback) {
+        debug('setHumidity', value);
+
+        this.humidity = value;
+        this.storageSet('hum', value);
+
+        this._processFanStatus();
+        callback();
+    }
+
+    getCurrentHumidity(callback) {
+        debug('getCurrentHumidity', this.currentHumidity);
+
+        if (!this.currentHumidity) {
+            this._readCurrentHumidity(callback);
+            return;
+        }
+        callback(null, this.currentHumidity);
+    }
+
+    setCurrentHumidity(value) {
+        debug('setCurrentHumidity');
+        this.currentHumidityCallback(value);
+    }
+
+    setCurrentHumidityCallback(callback) {
+        this.currentHumidityCallback = callback;
+    }
+
     _readCurrentTemp(callback) {
         debug('_readCurrentTemp', this.pins.temp);
         this.board.readTemp(this.pins.temp, this.tempSensors, (value) => {
@@ -114,6 +166,23 @@ class ThermostatAccessory {
         });
     }
 
+    _readCurrentHumidity(callback) {
+        debug('_readCurrentHumidity', this.tempHum);
+        this.board.readTempHum(this.tempHum, (value) => {
+            debug('board.readTempHum value:', this.tempHum, '-', value);
+
+            if (!(value instanceof Array)) {
+                debug('board.readTempHum value is not array:');
+                return;
+            }
+            const [hum, temp] = value;
+            this.currentHumidity = hum;
+            this.setCurrentHumidity(parseFloat(hum));
+            this._processFanStatus();
+            callback && callback(null, hum);
+        });
+    }
+
     _turnRelay(status) {
         debug('_turnRelay', status);
 
@@ -121,6 +190,13 @@ class ThermostatAccessory {
             this.relayStatus = status;
             this.board.digitalWrite(this.pins.relay, status ? this.board.LOW : this.board.HIGH);
         }
+    }
+
+    _turnFan(status) {
+        this.fanTurnedOnProgramaticaly = status;
+
+        accessoriesService.get(this.fan)
+            .setCharacteristic(Characteristic.On, status);
     }
 
     _processStateUpdate() {
@@ -149,19 +225,31 @@ class ThermostatAccessory {
         }
     }
 
+    _processFanStatus() {
+        debug('_processFanStatus', this.currentHumidity, this.humidity);
+        if (this.currentHumidity >= this.humidity + this.HUM_DELTA) {
+            this._turnFan(true);
+        }
+        if (this.fanTurnedOnProgramaticaly && (this.currentHumidity <= this.humidity - this.HUM_DELTA)) {
+            this._turnFan(false);
+        }
+    }
+
     _setNewTempInterval(time) {
         debug('_setNewTempInterval', time);
 
-        clearInterval(this.intervalId);
-        this.intervalId = setInterval(this._readCurrentTemp.bind(this), time)
+        clearInterval(this.tempIntervalId);
+        this.tempIntervalId = setInterval(this._readCurrentTemp.bind(this), time);
     }
 
     storageSet(key, value) {
-        storage.setItem('thermostat:' + this.id + ':' + key, value);
+        // storage.setItem('thermostat:' + this.id + ':' + key, value);
+        this['thermostat:' + this.id + ':' + key] = value;
     }
 
     storageGet(key, callback) {
-        storage.getItem('thermostat:' + this.id + ':' + key, callback);
+        // storage.getItem('thermostat:' + this.id + ':' + key, callback);
+        callback(this['thermostat:' + this.id + ':' + key])
     }
 }
 
