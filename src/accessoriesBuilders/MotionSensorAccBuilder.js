@@ -1,6 +1,4 @@
 const MotionAccessory = require('../models/motionSensor.model');
-const accessoriesService = require('../services/accessories.service');
-const automationService = require('../services/automation.service');
 
 module.exports = {
     build(config, { Accessory, Characteristic, Service, uuid }) {
@@ -23,13 +21,6 @@ module.exports = {
 
         motionAccessory.setCurrentStatusCallback((val) => service.setCharacteristic(Characteristic.MotionDetected, val));
 
-        if (config.automations) {
-            config.automations.forEach((automation) => {
-                automationService.add(automationService.create(automation, service))
-            });
-        }
-
-        accessoriesService.add(service, config.id);
         return accessory;
     },
     generateUUID(config, { uuid }) {

@@ -2,37 +2,6 @@
     {
         "id": "00:00:00:03:00:00",
         "serviceName": "Датчик рабочей зоны",
-        "pin": 12,
-        "automations": [
-            {
-                "id": "00:00:00:00:02:0A",
-                "condition": {
-                    "MotionDetected": true
-                },
-                "action": {
-                    "On": true
-                },
-                "timeout": 0,
-                "stop": [
-                    {
-                        "id": "00:00:00:00:02:0A",
-                        "condition": {
-                            "On": false
-                        },
-                        "timeout": 5000
-                    }
-                ]
-            },
-            {
-                "id": "00:00:00:00:02:0A",
-                "condition": {
-                    "MotionDetected": false
-                },
-                "action": {
-                    "On": false
-                },
-                "timeout": 120000
-            }
-        ]
+        "pin": 12
     }
 ]

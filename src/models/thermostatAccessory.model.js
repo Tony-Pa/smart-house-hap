@@ -1,10 +1,8 @@
 "use strict";
 const debug = require('debug')('SH:TSA');
-const Characteristic = require('hap-nodejs').Characteristic;
 
 const boardService = require('../services/board.service');
 const config = require('../config/main');
-const accessoriesService = require('../services/accessories.service');
 // const storage = require('node-persist');
 
 class ThermostatAccessory {
@@ -178,7 +176,6 @@ class ThermostatAccessory {
             const [hum, temp] = value;
             this.currentHumidity = hum;
             this.setCurrentHumidity(parseFloat(hum));
-            this._processFanStatus();
             callback && callback(null, hum);
         });
     }
@@ -190,13 +187,6 @@ class ThermostatAccessory {
             this.relayStatus = status;
             this.board.digitalWrite(this.pins.relay, status ? this.board.LOW : this.board.HIGH);
         }
-    }
-
-    _turnFan(status) {
-        this.fanTurnedOnProgramaticaly = status;
-
-        accessoriesService.get(this.fan)
-            .setCharacteristic(Characteristic.On, status);
     }
 
     _processStateUpdate() {
@@ -222,16 +212,6 @@ class ThermostatAccessory {
             if (this.currentTemp <= this.temp - this.TEMP_DELTA) {
                 this._turnRelay(true);
             }
-        }
-    }
-
-    _processFanStatus() {
-        debug('_processFanStatus', this.currentHumidity, this.humidity);
-        if (this.currentHumidity >= this.humidity + this.HUM_DELTA) {
-            this._turnFan(true);
-        }
-        if (this.fanTurnedOnProgramaticaly && (this.currentHumidity <= this.humidity - this.HUM_DELTA)) {
-            this._turnFan(false);
         }
     }
 

@@ -1,27 +1,24 @@
 const LightAccessory = require('../models/lightAccessory.model');
-const accessoriesService = require('../services/accessories.service');
 
 module.exports = {
     build(config, { Accessory, Characteristic, Service, uuid }) {
         const UUID = this.generateUUID(config, { uuid });
         const accessory = new Accessory(config.serviceName, UUID);
-        accessory.addService(Service.Fan, config.serviceName);
+        accessory.addService(Service.Switch, config.serviceName);
 
         return this.configure(accessory, config, { Characteristic, Service });
     },
     configure(accessory, config, { Characteristic, Service }) {
-        const fanAccessory = new LightAccessory(config);
-        const service = accessory.getService(Service.Fan);
+        const switchAccessory = new LightAccessory(config);
+        const service = accessory.getService(Service.Switch);
 
-        accessory.on('identify', fanAccessory.identify.bind(fanAccessory));
+        accessory.on('identify', switchAccessory.identify.bind(switchAccessory));
 
         service.getCharacteristic(Characteristic.On)
-            .on('set', fanAccessory.set.bind(fanAccessory))
-            .on('get', fanAccessory.get.bind(fanAccessory));
+            .on('set', switchAccessory.set.bind(switchAccessory))
+            .on('get', switchAccessory.get.bind(switchAccessory));
 
-        fanAccessory.setOnCharacteristic(service.setCharacteristic.bind(service, Characteristic.On));
-
-        accessoriesService.add(service, config.id);
+        switchAccessory.setOnCharacteristic(service.setCharacteristic.bind(service, Characteristic.On));
 
         return accessory;
     },

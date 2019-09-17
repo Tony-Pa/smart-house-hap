@@ -1,11 +1,9 @@
 const boardService = require('./src/services/board.service');
 const config = require('./src/config/main');
 const lightAccessoryBuilder = require('./src/accessoriesBuilders/LightAccBuilder');
-const fanAccessoryBuilder = require('./src/accessoriesBuilders/FanAccBuilder');
+const fanAccessoryBuilder = require('./src/accessoriesBuilders/SwitchAccBuilder');
 const motionAccessoryBuilder = require('./src/accessoriesBuilders/MotionSensorAccBuilder');
 const thermostatAccBuilder = require('./src/accessoriesBuilders/ThermostatAccBuilder');
-
-const automationService = require('./src/services/automation.service');
 
 const devices = [
     {
@@ -41,7 +39,6 @@ module.exports = function(homebridge) {
     homebridge.registerPlatform('homebridge-smartHousePlatform', 'SmartHousePlatform', SmartHousePlatform, true);
 };
 
-
 class SmartHousePlatform {
     constructor(log, config, api) {
         this.accessories = {};
@@ -66,8 +63,6 @@ class SmartHousePlatform {
         });
 
         api.registerPlatformAccessories('homebridge-smartHousePlatform', 'SmartHousePlatform', accessories);
-
-        automationService.startAll();
     }
 
     configureAccessory(accessory) {
